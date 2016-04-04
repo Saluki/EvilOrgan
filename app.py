@@ -9,7 +9,7 @@
 
 
 
-import RPi.GPIO as GPIO  
+import RPi.GPIO as GPIO
 import pygame	#to play audio files
 
 NB_INPUT = 8			#GPIO correspondants a des notes
@@ -29,28 +29,28 @@ def my_callback(channel):  #not sure what the paramater channel represents
 	global input
 	for i in range(1,NB_INPUT+1):
 		if GPIO.input(i):
-			music_file = "music_"+str(i)+".mp3"	
+			music_file = "music_"+str(i)+".mp3"
 			play_sound(music_file)
-	    		if (len(input) == 0 and SEQUENCE[0] == i) or (i == SEQUENCE[len(input)-1]):		#la note est bonne
-	    			if SEQUENCE == input: #cest gagne
-	    				print "Cest gagné, c est gagné" #mp3 de dora l'exploratrice?
-	    				input = []	#reset the game
-	    				#put GREEN lights!
-	    			else:
-	    				input.append(i)
-	    		else:
-	    			if i == NB_INPUT+2:#si on a appuyé sur la touche piège
-	    				#play_sound("cest_un_piege.mp3")
-	    				
-	    			input = []	#on vide les trucs entré par l'utilisateur
+				if (len(input) == 0 and SEQUENCE[0] == i) or (i == SEQUENCE[len(input)-1]):		#la note est bonne
+					if SEQUENCE == input: #cest gagne
+						print "Cest gagné, c est gagné" #mp3 de dora l'exploratrice?
+						input = []	#reset the game
+						#put GREEN lights!
+					else:
+						input.append(i)
+				else:
+					if i == NB_INPUT+2:#si on a appuyé sur la touche piège
+						#play_sound("cest_un_piege.mp3")
+
+					input = []	#on vide les trucs entré par l'utilisateur
 
 
 try:
 	for i in range(1, NB_INPUT+3):  #+1 pour le io "piege", +1 pour "turn off"
 		GPIO.setup(i, GPIO.IN)		#on declare les io comme des input
 		GPIO.add_event_detect(i, GPIO.RISING, callback=my_callback)		#on leur ajoute leur listener
-		
-	while true:
+
+	while True:
 		if GPIO.input(NB_INPUT+2):	#if turn off
 			break
 		pass
