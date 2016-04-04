@@ -33,16 +33,16 @@ def my_callback(channel):  #not sure what the paramater channel represents
 			play_sound(music_file)
 				if (len(input) == 0 and SEQUENCE[0] == i) or (i == SEQUENCE[len(input)-1]):		#la note est bonne
 					if SEQUENCE == input: #cest gagne
-						print "Cest gagné, c est gagné" #mp3 de dora l'exploratrice?
+						print "Cest gagne, c est gagne" #mp3 de dora l'exploratrice?
 						input = []	#reset the game
 						#put GREEN lights!
 					else:
 						input.append(i)
 				else:
-					if i == NB_INPUT+2:#si on a appuyé sur la touche piège
+					if i == NB_INPUT+2: #si on a appuye sur la touche piege
 						#play_sound("cest_un_piege.mp3")
 
-					input = []	#on vide les trucs entré par l'utilisateur
+					input = []	#on vide les trucs entre par l'utilisateur
 
 
 try:
