@@ -3,7 +3,11 @@
 #this scripts quick and dirty assumes 	- that the mp3 filesare named like this: "music_[1-9].mp3"
 #					- the notes are on the pins 1 -> NB_INPUT, on Board mode
 #					- NB_INPUTS are normal notes, NB_INPUT+1 is a trap key and NB_INPUT+2 is a "turn off" key
+# we might have a problem. This only detects rising signals, so the sound will play at rising. What happens if the user maintains the key and the mp3 is over?
+#TODO: change the above problem
 #TODO: add a function reseting the input
+
+
 
 import RPi.GPIO as GPIO  
 import pygame	#to play audio files
