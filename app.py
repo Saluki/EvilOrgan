@@ -5,7 +5,6 @@
 #					- NB_INPUTS are normal notes, NB_INPUT+1 is a trap key and NB_INPUT+2 is a "turn off" key
 # we might have a problem. This only detects rising signals, so the sound will play at rising. What happens if the user maintains the key and the mp3 is over?
 #TODO: change the above problem
-#TODO: add a function reseting the input
 
 
 
@@ -13,45 +12,46 @@ import RPi.GPIO as GPIO
 import pygame	#to play audio files
 
 NB_INPUT = 8			#GPIO correspondants a des notes
-SEQUENCE = [3,2,3,3,6,5,3]	#notes a jouer sous forme des pin qui rentrent. ATTENTION, pas mettre de num > NB_INPUT
-input = []			#notes jouees par l utilisateur
+SEQUENCE = [3,3,8,7,8,7,3]	#notes a jouer sous forme des pin qui rentrent. ATTENTION, pas mettre de num > NB_INPUT
+user_input = []     #notes jouees par l utilisateur
+available_gpio=[3,5,7,8,10,11,12,13,15,16,18,19,21,22,23,24,26]
 
 GPIO.setmode(GPIO.BOARD)	#on identifie les GPIO par leurs place sur la board
 
-def play_sound(file):
+def play_sound(music_file):
     pygame.mixer.init()
-    pygame.mixer.music.load(file)
+    pygame.mixer.music.load(music_file)
     pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() == True:	#might not be necesary (might actualy be a bug, to test)
+    while pygame.mixer.music.get_busy():	#might not be necesary (might actualy be a bug, to test)
         continue
 
 def my_callback(channel):  #not sure what the paramater channel represents
-    global input
-    for i in range(1,NB_INPUT+1):
-        if GPIO.input(i):
+    global user_input
+    for i in range(0,NB_INPUT+1):
+        if GPIO.input(available_gpio[i]):
             music_file = "music_"+str(i)+".mp3"
             play_sound(music_file)
-            if (len(input) == 0 and SEQUENCE[0] == i) or (i == SEQUENCE[len(input)-1]):		#la note est bonne
-                if SEQUENCE == input: #cest gagne
+            if (len(user_input) == 0 and SEQUENCE[0] == available_gpio[i]) or (available_gpio[i] == SEQUENCE[len(user_input)]):		#la note est bonne len(user_input)+1?
+                if SEQUENCE == user_input: #cest gagne
                     print "Cest gagne, c est gagne" #mp3 de dora l'exploratrice?
-                    input = []	#reset the game
+                    user_input = []	#reset the game
                 #put GREEN lights!
                 else:
-                    input.append(i)
+                    user_input.append(available_gpio[i])
             else:
-                if i == NB_INPUT+2: #si on a appuye sur la touche piege
-                #play_sound("cest_un_piege.mp3")
-
-                input = []	#on vide les trucs entre par l'utilisateur
+                if i == NB_INPUT+1: #si on a appuye sur la touche piege
+                    #play_sound("cest_un_piege.mp3")
+                    pass
+                user_input = []	#on vide les trucs entre par l'utilisateur
 
 
 try:
-    for i in range(1, NB_INPUT+3):  #+1 pour le io "piege", +1 pour "turn off"
-        GPIO.setup(i, GPIO.IN)		#on declare les io comme des input
-        GPIO.add_event_detect(i, GPIO.RISING, callback=my_callback)		#on leur ajoute leur listener
+    for i in range(0, NB_INPUT+2):  #+1 pour le io "piege", +1 pour "turn off"
+        GPIO.setup(available_gpio[i], GPIO.IN)		#on declare les io comme des user_input
+        GPIO.add_event_detect(available_gpio[i], GPIO.RISING, callback=my_callback)		#on leur ajoute leur listener
 
     while True:
-        if GPIO.input(NB_INPUT+2):	#if turn off
+        if GPIO.input(available_gpio[NB_INPUT+2]):	#if turn off
             break
         pass
 finally:
